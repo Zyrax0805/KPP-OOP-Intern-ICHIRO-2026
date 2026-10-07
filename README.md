@@ -1,0 +1,1 @@
+# KPP-OOP-Intern-ICHIRO-2026
