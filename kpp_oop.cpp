@@ -15,16 +15,16 @@ struct point {
         return (x == other.x) and (y == other.y);
     }
 
-    boll operator!=(const point& other) const{
+    bool operator!=(const point& other) const{
         return !(*this == other);
     }
 
 };
 
-class field (){
+class field{
 
 private:
-    int rows, int cols;
+    int rows, cols;
     vector<vector<char>> grid;
 
 public:
@@ -53,48 +53,69 @@ public:
     
 };//end of field class
 
-class ball (){
+class ball{
 
 private:
     point letak;
+    int speed;
+    vector<int> arah = {-1, 0, 45, 90, 135, 180, 225, 270, 315};
 
 public:
-    ball(point position) : letak(position){}
+    ball(point position = {-1,-1}, int kecepatan = 0) : letak(position), speed(kecepatan){}
+
+    
+
+    //getposition
+    //move (letak, speed, arah)
+    //check goal
 
     
 
 };//end of ball class
 
-class simulator (){
+class simulator{
 private:
 
 public:
-    //tendang
-    //fungsi buat hitung jarak
-    //gerak bole
+    // metode simulasi(robot, ball, field) per tick 
+    // metode simulasi ini kayak mi solve()
+
+    //representasi grid
+    void show_grid (field lapangan, striker ichiro, ball bola){
+
+    }
     
 
 
 };//end of simulator class
 
-class robot(){
+class robot{
 private:
     point lokasi;
     vector<string> state;
     //orientasi
-    //kecepatan
+    int speed;
 
 public:
-    robot(point position) : lokasi(position){}  
+    robot(point position, int kecepatan = 1) : lokasi(position), speed(kecepatan){}  
 
     //sense
     //think
     //act
 
-    //buat striker yang inherit ke robot
+    
 
 
 };//end of robot class
+
+//buat striker yang inherit ke robot
+class striker : public robot{
+
+};
+
+class sensor{
+
+};
 
 
 
@@ -106,8 +127,10 @@ int main(){
     field lapangan(rows,cols);
     lapangan.input_grid();
 
-    point start = find_target('R');
-    point bola = find_target('0');
+    point start = lapangan.find_target('R');
+    point ball_position = lapangan.find_target('0');
+
+    ball bola(ball_position, 0);
 
     robot striker(start);
     simulator cetak_gol;
