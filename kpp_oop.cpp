@@ -24,10 +24,11 @@ struct point {
 class field{
 
 private:
-    int rows, cols;
-    vector<vector<char>> grid;
+    
 
 public:
+    int rows, cols;
+    vector<vector<char>> grid;
     // pake one indexing
     field(int r = 0, int c = 0) : rows(r), cols(c){
         grid.assign(rows + 1, vector<char>(cols + 1, '.'));
@@ -63,11 +64,16 @@ private:
 public:
     ball(point position = {-1,-1}, int kecepatan = 0) : letak(position), speed(kecepatan){}
 
+    point getposition() {return letak;}
     
+    bool check_goal(){
+        //kekurangan cuma bisa pada satu fixed field
+        if((letak.y >= 4 and letak.y <= 9) and letak.x == 18){
+            return true;
+        }else return false;
+    }
 
-    //getposition
     //move (letak, speed, arah)
-    //check goal
 
     
 
@@ -82,7 +88,13 @@ public:
 
     //representasi grid
     void show_grid (field lapangan, striker ichiro, ball bola){
-
+        for(int i = 1; i <= lapangan.rows; i++){
+            for(int j = 1; j <= lapangan.cols; j++){
+                cout << lapangan.grid[i][j] << " ";//belum bisa mengeluarkan visi dari robot
+                //visualisasi robot dan bola tok + lapangan
+            }
+        cout << nl;
+        }
     }
     
 
