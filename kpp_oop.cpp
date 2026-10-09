@@ -24,10 +24,9 @@ struct point {
 class field{
 
 private:
-    
-
-public:
     int rows, cols;
+    
+public:
     vector<vector<char>> grid;
     // pake one indexing
     field(int r = 0, int c = 0) : rows(r), cols(c){
@@ -51,6 +50,10 @@ public:
         return {-1,-1};
     }
 
+   int get_cols(){return cols;}
+   int get_rows(){return rows;}
+   vector<vector<char>> get_grid(){return grid;}
+ 
     
 };//end of field class
 
@@ -88,8 +91,12 @@ public:
 
     //representasi grid
     void show_grid (field lapangan, striker ichiro, ball bola){
-        for(int i = 1; i <= lapangan.rows; i++){
-            for(int j = 1; j <= lapangan.cols; j++){
+        // vector<vector<char>> grid = lapangan.get_grid();
+        //kasi masuk dulu visualisasi robot
+        //pake parameter orientasi robot
+        // void make_visual(){}
+        for(int i = 1; i <= lapangan.get_rows(); i++){
+            for(int j = 1; j <= lapangan.get_cols(); j++){
                 cout << lapangan.grid[i][j] << " ";//belum bisa mengeluarkan visi dari robot
                 //visualisasi robot dan bola tok + lapangan
             }
@@ -105,11 +112,34 @@ class robot{
 private:
     point lokasi;
     vector<string> state;
-    //orientasi
+    point orientation;
     int speed;
+    //vector perubahan 4 sisi dari posisi robot
+    vector<point> dorien = {{1,0},{-1,0},{0,1},{0,-1}};
 
 public:
-    robot(point position, int kecepatan = 1) : lokasi(position), speed(kecepatan){}  
+    robot(point position, int kecepatan = 1) : lokasi(position), speed(kecepatan){}
+    
+    //assign orintation dulu deteksinya pake cek 4 arah aja, dimana ada @ disitu dia menghadap
+    void get_orientation(field lapangan){
+        
+        for(int i = 0; i < 4; i++){
+            int ny = lokasi.y + dorien[i].y;
+            int nx = lokasi.x + dorien[i].x;
+            if(lapangan.grid[ny][nx] == '@'){
+                orientation = dorien[i];
+                break;
+            }
+        }
+        orientation = {-1,-1};//kalau ndak didapat ki orientasinya ke mana
+        return;
+    }
+
+
+
+    //pikir bagaimana cara ubah orientationnya
+    //apakah kira rotasi saja 90 derajat
+    //atau assign satu satu point yang termasuk kedalam vision sesuai dengan arah robot melihat
 
     //sense
     //think
@@ -144,7 +174,6 @@ int main(){
 
     ball bola(ball_position, 0);
 
-    robot striker(start);
     simulator cetak_gol;
     
 
