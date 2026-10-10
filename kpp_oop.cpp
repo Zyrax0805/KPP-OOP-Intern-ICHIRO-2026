@@ -8,6 +8,13 @@ using namespace std;
 #define fi first
 #define se second
 
+enum RobotState {
+    SEARCH_BALL,
+    APPROACH_BALL,
+    ALIGN_TO_GOAL,
+    KICK
+};
+
 struct point {
     int x,y;
 
@@ -52,7 +59,8 @@ public:
 
    int get_cols(){return cols;}
    int get_rows(){return rows;}
-   vector<vector<char>> get_grid(){return grid;}
+//    vector<vector<char>> get_grid(){return grid;}
+
  
     
 };//end of field class
@@ -62,7 +70,7 @@ class ball{
 private:
     point letak;
     int speed;
-    vector<int> arah = {-1, 0, 45, 90, 135, 180, 225, 270, 315};
+    vector<int> arah = {-1, 0, 90, 180, 270};
 
 public:
     ball(point position = {-1,-1}, int kecepatan = 0) : letak(position), speed(kecepatan){}
@@ -76,7 +84,9 @@ public:
         }else return false;
     }
 
-    //move (letak, speed, arah)
+    void move(int arahbola){
+
+    }
 
     
 
@@ -108,17 +118,73 @@ public:
 
 };//end of simulator class
 
+class Sensor{
+    // orientasi berdasarkan orientasi robot dan posisi robot
+private:
+    point orientation;
+    point robotpos;
+    bool balldetected;
+    bool everseenball;
+
+public:
+    // Sensor(point posisi_robot, point orien): orientation(orien), robotpos(posisi_robot){}
+    Sensor(){}
+    void scan(field lapangan, point posisi_robot, point orien){
+        orientation = orien;
+        robotpos = posisi_robot;
+        //mengassign setiap titik pada field yang merupakan area penglihatan robot dengan karakter '@'
+        int maxX = lapangan.get_cols();
+        int maxY = lapangan.get_rows();
+        int rx = robotpos.x;
+        int ry = robotpos.y;
+        if(orientation.x == 0){//sumbu y
+            int cnt = 1;
+            for(ll y = ry+1*(orientation.y); y <= ry+3*(orientation.y); y++){
+                if(y < 1 or y > maxY)continue;//lewati kalau semisal out of border
+                for(ll x = rx-cnt; x <= rx+cnt; x++){
+                    if(x < 1 or x > maxX)continue;
+                    if(lapangan.grid[y][x] == '0'){
+                        balldetected = true;
+                        everseenball = true;
+                    }
+                    lapangan.grid[y][x] = '@';
+                }
+            }
+        }else{//sumbu x
+            int cnt = 1;
+            for(ll x = rx+1*(orientation.x); x <= rx+3*(orientation.x); x++){
+                if(x < 1 or x > maxX)continue;
+                for(ll y = ry-cnt; y <= ry+cnt; y++){
+                    if(y < 1 or y > maxY)continue;//lewati kalau semisal out of border
+                    if(lapangan.grid[y][x] == '0'){
+                        balldetected = true;
+                        everseenball = true;
+                    }
+                    lapangan.grid[y][x] = '@';
+                }
+            }
+        }
+    }
+
+    bool get_balldetected(){return balldetected;}
+    bool get_everseenball(){return everseenball;}
+};
+
 class robot{
 private:
     point lokasi;
-    vector<string> state;
+    vector<string> history_state;
     point orientation;
+    RobotState state;
     int speed;
+    Sensor sensor;
     //vector perubahan 4 sisi dari posisi robot
-    vector<point> dorien = {{1,0},{-1,0},{0,1},{0,-1}};
+    vector<point> dorien = {{1,0},{-1,0},{0,1},{0,-1}};//atas, bawah, kanan, kiri
 
 public:
-    robot(point position, int kecepatan = 1) : lokasi(position), speed(kecepatan){}
+    robot(point position, int kecepatan = 1) : lokasi(position), speed(kecepatan){
+        // Sensor sensor(lokasi, orientation);
+    }
     
     //assign orintation dulu deteksinya pake cek 4 arah aja, dimana ada @ disitu dia menghadap
     void get_orientation(field lapangan){
@@ -128,7 +194,7 @@ public:
             int nx = lokasi.x + dorien[i].x;
             if(lapangan.grid[ny][nx] == '@'){
                 orientation = dorien[i];
-                break;
+                return;
             }
         }
         orientation = {-1,-1};//kalau ndak didapat ki orientasinya ke mana
@@ -142,7 +208,29 @@ public:
     //atau assign satu satu point yang termasuk kedalam vision sesuai dengan arah robot melihat
 
     //sense
+    void sense(field lapangan){
+        sensor.scan(lapangan, lokasi, orientation);
+
+    }
+
     //think
+    void think(field lapangan){
+        if(!(sensor.get_everseenball())) state = SEARCH_BALL;
+        else{
+            bool jauh = true;
+            //hitung distance from ball
+            for(int i = 0; i < 4; i++){
+            int ny = lokasi.y + dorien[i].y;
+            int nx = lokasi.x + dorien[i].x;
+                if(lapangan.grid[ny][nx] == '0'){
+                    state = APPROACH_BALL;
+                    jauh = false;
+                    break;
+                }
+            }
+            if(!(jauh))state = KICK;
+        }
+    }
     //act
 
     
@@ -152,10 +240,6 @@ public:
 
 //buat striker yang inherit ke robot
 class striker : public robot{
-
-};
-
-class sensor{
 
 };
 
