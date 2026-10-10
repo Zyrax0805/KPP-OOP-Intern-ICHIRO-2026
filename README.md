@@ -2,11 +2,14 @@
 
 mohon maaf sebelumnya dikarenakan tugas KPP saya tidak selesai sesuai dengan apa yang diminta
 
+mohon maaf, untuk codenya masih belum bisa di-run juga
+
 pertama-tama, saya membuat Robotstate bertipe data enum yang berisi state robot (SEARCH_BALL, APPROACH_BALL, ALIGN_TO_GOAL, KICK)
 
 kemudian saya membuat sebuah user-defined data type bernama Point untuk menyimpan titik kordinat pada sumbu-y dan sumbu-x. sebenarnya tipe datanya itu mirip mirip ama pair sih. cuman karena malas bikin makepair() setiap nge-assign titik baru dan biar ngecomparenya enak, jadinya pake Point itu.
 
-kemudian untuk objeknya saya puunya:
+    kemudian untuk objeknya saya puunya:
+
     1. field:
         a. merupakan lapangan dalam representasi grid dua dimensi
         b. atribut privatenya cuma rows dan cols
@@ -54,4 +57,6 @@ Use of AI on this assignment:
 2. mencari tahu apa saja atribut dan method yang harus dimiliki oleh setiap class
 3. membuat dan mempelajari tipe data enum
 4. menggunakan AI untuk men-generate the entire code, tapi codenya ngawur, jadi saya pelajari aja struktur penulisannya.
+
+sekian, terimakasih banyak ilmunya kak :D
 
